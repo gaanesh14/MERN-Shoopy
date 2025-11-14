@@ -10,4 +10,17 @@ Add to cart
 Checkout page
 User profile and orders page
 
+🔧 Tech Stack
+Frontend
+React.js, Redux Toolkit, React Router, TailwindCSS, Axios
+
+Backend
+Node.js, Express.js, MongoDB, Mongoose, JSON Web Token (JWT), Multer / Cloudinary (for images)
+
+Installation and SetUP
+Git Clone Repo
+CD repo(shoopy)
+
+Backend  : setUP .env files ->   cd backend -> NPM install -> npm start 
+Frontnd  : setUp .env files -> cd frontend -> npm + vite Install -> npm run dev
 
