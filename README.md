@@ -10,37 +10,4 @@ Add to cart
 Checkout page
 User profile and orders page
 
-👨‍💼 Admin Panel
-Add, edit, delete products
-Upload product images
-Manage orders
-Manage categories
-Dashboard statistics
 
-🔐 Authentication
-JWT-based Auth
-User login & signup
-Admin role-based access
-Forgot password (optional)
-
-💳 Payment Integration (Optional)
-Paypal
-🛠 Backend (Node + Express)
-REST APIs for users, products, cart, orders
-MongoDB with Mongoose
-Secure password hashing
-Middleware-based architecture
-
-🔧 Tech Stack
-Frontend
-React.js, Redux Toolkit, React Router, TailwindCSS, Axios
-
-Backend
-Node.js, Express.js, MongoDB, Mongoose, JSON Web Token (JWT), Multer / Cloudinary (for images)
-
-Installation and SetUP
-Git Clone Repo
-CD repo(shoopy)
-
-Backend  : setUP .env files ->   cd backend -> NPM install -> npm start 
-Frontnd  : setUp .env files -> cd frontend -> npm + vite Install -> npm run dev
