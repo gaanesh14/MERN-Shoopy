@@ -21,3 +21,7 @@
           -moz-appearance: textfield;
           /* This hides the spinner for Firefox */
         }
+
+::-webkit-scrollbar {
+  display: none;
+}
