@@ -7,12 +7,22 @@ import products from './data/products.js';
 
 dotenv.config();
 
-mongoose.connect(process.env.MONGODB_URL);
+if (!process.env.MONGODB_URL) {
+  console.error("MONGODB_URL not set in .env");
+  process.exit(1);
+}
+
+// mongoose.connect(process.env.MONGODB_URL)
+// .then(() => console.log("MongoDB Connected"))
+//   .catch(err => console.log("Mongo Error:", err));
 
 const seedData = async () => {
     try{
+        await mongoose.connect(process.env.MONGODB_URL);
+        console.log("MongoDB connected");
+
         await Products.deleteMany();
-       // await Users.deleteMany();
+        await Users.deleteMany();
         await Cart.deleteMany();
 
         // create a default admin user
@@ -30,7 +40,7 @@ const seedData = async () => {
         });
         await Products.insertMany(sampleProduct)
         console.log("product data seeded successfully!");
-        process.exit()
+        process.exit(0)
         } catch(error){
            console.error("Error seeding the data:", error);
            process.exit(1)

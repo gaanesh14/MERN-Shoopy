@@ -56,7 +56,7 @@ function Collectionspage() {
   },[]);
 
 
-  if(loading){
+  if(loading && (!ProductGrid)){
     return <p> Loading.....</p>
   }
   if(error) return <p> Error : {error}</p>
