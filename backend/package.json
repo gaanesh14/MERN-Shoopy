@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "nodemon index.js",
-    "seed": "nodemon seeder.js"
+    "seed": "node seeder.js"
   },
   "keywords": [],
   "author": "",
