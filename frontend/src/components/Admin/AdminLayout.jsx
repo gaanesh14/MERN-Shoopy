@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { FaBars } from 'react-icons/fa';
-import { Outlet } from 'react-router-dom';
-import AdminSidebar from './AdminSidebar';
+import React, { useState } from "react";
+import { FaBars } from "react-icons/fa";
+import { Outlet } from "react-router-dom";
+import AdminSidebar from "./AdminSidebar";
 
 function AdminLayout() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -31,7 +31,7 @@ function AdminLayout() {
       {/* Sidebar */}
       <div
         className={`bg-gray-900 text-white w-64 min-h-screen p-4 z-30 transition-transform duration-300 fixed md:relative md:translate-x-0 ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <AdminSidebar />

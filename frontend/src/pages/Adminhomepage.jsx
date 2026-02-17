@@ -7,13 +7,13 @@ import { fetchAllOrders } from "../Redux/slices/adminOrderSlice";
 function AdminHomepage() {
   const dispatch = useDispatch();
   const {
-    products= [],
+    products = [],
     loading: productsLoading,
     error: productsError,
   } = useSelector((state) => state.adminProducts || {});
 
   const {
-    orders=[],
+    orders = [],
     totalOrders,
     totalSales,
     loading: ordersLoading,
@@ -23,22 +23,7 @@ function AdminHomepage() {
   useEffect(() => {
     dispatch(fetchAdminProducts());
     dispatch(fetchAllOrders());
-    // console.log("orders:",orders)
-  },[dispatch]);
-
-//   useEffect(() => {
-//   console.log("Fetched orders:", orders);
-// }, [orders]);
-  // const orders = [
-  //   {
-  //     _id: 123123,
-  //     user: {
-  //       name: "John Doe",
-  //     },
-  //     totalprice: 110,
-  //     status: "Processing",
-  //   },
-  // ];
+  }, [dispatch]);
 
   return (
     <div className="w-full min-h-screen bg-gray-50 p-6">
@@ -59,7 +44,9 @@ function AdminHomepage() {
             <h2 className="text-lg font-semibold text-gray-600 mb-2">
               Revenue
             </h2>
-            <p className="text-3xl font-bold text-gray-800">{totalSales.toFixed(2)}</p>
+            <p className="text-3xl font-bold text-gray-800">
+              {totalSales.toFixed(2)}
+            </p>
           </div>
 
           <div className="p-6 bg-white shadow-md rounded-2xl">
@@ -79,7 +66,9 @@ function AdminHomepage() {
             <h2 className="text-lg font-semibold text-gray-600 mb-2">
               Total Products
             </h2>
-            <p className="text-3xl font-bold text-gray-800">{products.length}</p>
+            <p className="text-3xl font-bold text-gray-800">
+              {products.length}
+            </p>
             <Link
               to="/admin/products"
               className="inline-block mt-2 text-sm text-blue-600 hover:underline"

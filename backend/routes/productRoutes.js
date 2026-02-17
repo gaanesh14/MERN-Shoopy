@@ -5,22 +5,18 @@ import mongoose from "mongoose";
 
 const router = express.Router();
 
-// const normalizeArray = (val) => {
-//   if(Array.isArray(val)) return val.map(v => String(v).trim()).filter(Boolean);
-//   if(typeof val === "string")
-//     return val.split(",").map(v => v.trim()).filter(Boolean);
-//   return [];
-// };
-
 // @route POST /api/products
 // @desc Create a new product
 // @access private/Admin
 const normalizeArray = (val) => {
   if (Array.isArray(val)) {
-    return val.map(v => String(v).trim()).filter(Boolean);
+    return val.map((v) => String(v).trim()).filter(Boolean);
   }
   if (typeof val === "string") {
-    return val.split(",").map(v => v.trim()).filter(Boolean);
+    return val
+      .split(",")
+      .map((v) => v.trim())
+      .filter(Boolean);
   }
   return [];
 };
@@ -87,7 +83,9 @@ router.post("/", protect, admin, async (req, res) => {
     console.error("Error creating product:", error);
     if (error.name === "ValidationError") {
       // Mongoose's built-in validation for empty arrays will now be triggered
-      const errors = Object.keys(error.errors).map(key => error.errors[key].message);
+      const errors = Object.keys(error.errors).map(
+        (key) => error.errors[key].message,
+      );
       return res.status(400).json({ message: "Validation failed", errors });
     }
     res.status(500).json({ message: "Server Error!", error: error.message });
@@ -121,10 +119,10 @@ router.put("/:id", protect, admin, async (req, res) => {
       sku,
     } = req.body;
     //console.log("data",req.body);
-    
+
     let product = await Products.findById(req.params.id);
     //console.log("data:",product);
-    
+
     if (!product) {
       return res.status(404).json({ message: "Product not found" });
     }
@@ -141,14 +139,18 @@ router.put("/:id", protect, admin, async (req, res) => {
     if (size !== undefined) {
       const normalizedSize = normalizeArray(size);
       if (normalizedSize.length === 0) {
-        return res.status(400).json({ message: "Size must have at least one valid value." });
+        return res
+          .status(400)
+          .json({ message: "Size must have at least one valid value." });
       }
       product.size = normalizedSize;
     }
     if (color !== undefined) {
       const normalizedColor = normalizeArray(color);
       if (normalizedColor.length === 0) {
-        return res.status(400).json({ message: "Color must have at least one valid value." });
+        return res
+          .status(400)
+          .json({ message: "Color must have at least one valid value." });
       }
       product.color = normalizedColor;
     }
@@ -157,8 +159,10 @@ router.put("/:id", protect, admin, async (req, res) => {
     product.material = material ?? product.material;
     product.gender = gender ?? product.gender;
     product.images = images ?? product.images;
-    product.isFeatured = typeof isFeatured === "boolean" ? isFeatured : product.isFeatured;
-    product.isPublished = typeof isPublished === "boolean" ? isPublished : product.isPublished;
+    product.isFeatured =
+      typeof isFeatured === "boolean" ? isFeatured : product.isFeatured;
+    product.isPublished =
+      typeof isPublished === "boolean" ? isPublished : product.isPublished;
     product.tags = tags ?? product.tags;
     product.dimensions = dimensions ?? product.dimensions;
     product.weight = weight ?? product.weight;
@@ -169,7 +173,9 @@ router.put("/:id", protect, admin, async (req, res) => {
   } catch (error) {
     console.error("Error updating product:", error);
     if (error.name === "ValidationError") {
-      return res.status(400).json({ message: error.message, errors: error.errors });
+      return res
+        .status(400)
+        .json({ message: error.message, errors: error.errors });
     }
     res.status(500).json({ message: "Server error", error: error.message });
   }
@@ -199,28 +205,45 @@ router.delete("/:id", protect, admin, async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const {
-      collections, size, color, gender, minPrice, maxPrice,
-      sortBy, search, category, material, brand, limit,
+      collections,
+      size,
+      color,
+      gender,
+      minPrice,
+      maxPrice,
+      sortBy,
+      search,
+      category,
+      material,
+      brand,
+      limit,
     } = req.query;
 
     let query = {};
-    if (collections && collections.toLowerCase() !== "all") query.collections = collections;
+    if (collections && collections.toLowerCase() !== "all")
+      query.collections = collections;
     if (gender && gender.toLowerCase() !== "all") {
       query.gender = { $regex: `^${gender}$`, $options: "i" };
     }
     if (category && category.toLowerCase() !== "all") query.category = category;
-    if (material) query.material = { $in: material.split(",").map(m => new RegExp(`^${m.trim()}$`, 'i')) };
-    if (brand) query.brand = { $in: brand.split(",").map(b => new RegExp(`^${b.trim()}$`, 'i')) };
-    if (size) query.size = { $in: size.split(",").map(s => s.trim()) };
-    if (color) query.color = { $in: color.split(",").map(c => c.trim()) };
-   // if (gender) query.gender = gender;
-    
+    if (material)
+      query.material = {
+        $in: material.split(",").map((m) => new RegExp(`^${m.trim()}$`, "i")),
+      };
+    if (brand)
+      query.brand = {
+        $in: brand.split(",").map((b) => new RegExp(`^${b.trim()}$`, "i")),
+      };
+    if (size) query.size = { $in: size.split(",").map((s) => s.trim()) };
+    if (color) query.color = { $in: color.split(",").map((c) => c.trim()) };
+    // if (gender) query.gender = gender;
+
     if (minPrice || maxPrice) {
       query.price = {};
       if (minPrice) query.price.$gte = Number(minPrice);
       if (maxPrice) query.price.$lte = Number(maxPrice);
     }
-    
+
     if (search) {
       const searchRegex = new RegExp(search, "i");
       query.$or = [
@@ -229,20 +252,28 @@ router.get("/", async (req, res) => {
         { brand: searchRegex },
         { category: searchRegex },
         { tags: searchRegex },
-        { gender : searchRegex},
+        { gender: searchRegex },
       ];
     }
-    
+
     let sort = { createdAt: -1 };
     if (sortBy) {
       switch (sortBy) {
-        case "priceAsc": sort = { price: 1 }; break;
-        case "priceDesc": sort = { price: -1 }; break;
-        case "popularity": sort = { rating: -1, numReviews: -1 }; break;
-        case "newest": sort = { createdAt: -1 }; break;
+        case "priceAsc":
+          sort = { price: 1 };
+          break;
+        case "priceDesc":
+          sort = { price: -1 };
+          break;
+        case "popularity":
+          sort = { rating: -1, numReviews: -1 };
+          break;
+        case "newest":
+          sort = { createdAt: -1 };
+          break;
       }
     }
-    
+
     const products = await Products.find(query)
       .sort(sort)
       .limit(Number(limit) || 0);
@@ -254,14 +285,17 @@ router.get("/", async (req, res) => {
   }
 });
 
-
 // @route GET /api/products/best-seller
 // @desc Get the best-selling product
 // @access Public
 router.get("/best-seller", async (req, res) => {
   try {
-    const bestSeller = await Products.findOne().sort({ rating: -1, numReviews: -1 });
-    if (!bestSeller) return res.status(404).json({ message: "No best seller found." });
+    const bestSeller = await Products.findOne().sort({
+      rating: -1,
+      numReviews: -1,
+    });
+    if (!bestSeller)
+      return res.status(404).json({ message: "No best seller found." });
     res.json(bestSeller);
   } catch (error) {
     console.error("Error fetching best seller:", error);

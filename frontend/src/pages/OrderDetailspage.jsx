@@ -1,40 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect} from "react";
+import { useDispatch,useSelector } from "react-redux";
+import { fetchOrderDetails } from "../Redux/slices/orderSlice";
 import { useParams, Link } from "react-router-dom";
-// import men1 from "../assets/mens collection/mens1.jpg";
-// import men2 from "../assets/mens collection/mens2.jpg";
 
-function OrderDetailspage() {
+function OrderDetailspage({}) {
   const { id } = useParams();
-  const [orderDetails, setOrderDetails] = useState(null);
+  const dispatch = useDispatch();
+  const { orderDetails, loading, error } = useSelector((state) => state.orders);
 
   useEffect(() => {
-    const mockOrderdetails = {
-      _id: id,
-      createedAt: new Date(),
-      isPaid: true,
-      isDelivered: false,
-      paymentMethod: "payPal",
-      shippingMethod: "Standard",
-      shippingAddress: { city: "New York", countery: "USA" },
-      orderItems: [
-        {
-          productId: 1,
-          name: "sweatshirt",
-          price: 120,
-          quantity: 1,
-          //image: men2,
-        },
-        {
-          productId: 2,
-          name: "shirt",
-          price: 100,
-          quantity: 2,
-          //image: men1,
-        },
-      ],
-    };
-    setOrderDetails(mockOrderdetails);
-  }, [id]);
+    if (id) {
+      dispatch(fetchOrderDetails(id));
+    } 
+  }, [dispatch, id]);
+
+  if (loading) return <p> Loading order details...</p>;
+  if (error) return <p> Error: {error} </p>;
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6">
       <h2 className="text-2xl md:text-3xl font-bold mb-6"> Oreder Details</h2>
@@ -48,11 +29,11 @@ function OrderDetailspage() {
                 Order ID : #{orderDetails._id}
               </h3>
               <p className="text-gray-600">
-                {new Date(orderDetails.createedAt).toLocaleDateString()}
+                {new Date(orderDetails.createdAt).toLocaleDateString()}
               </p>
              </div>
               <div className="flex flex-col items-start sm:items-end  justify-start mt-4 sm:mt-0">
-                <span
+                <span 
                   className={`${
                     orderDetails.isPaid
                       ? "bg-green-100 text-green-700"
@@ -60,7 +41,7 @@ function OrderDetailspage() {
                   } 
                           px-3  rounded-full text-sm font-medium mb-2`}
                 >
-                  {orderDetails.isPaid ? "Approved" : "Pending"}
+                   Payment: {orderDetails.isPaid ? "Approved" : "Pending"}
                 </span>
                 <span
                   className={`${
@@ -70,19 +51,19 @@ function OrderDetailspage() {
                   } 
                           px-3 rounded-full text-sm font-medium mb-2`}
                 >
-                  {orderDetails.isDelivered ? "Delivered" : "Pending"}
+                  Delivary Status:{orderDetails.isDelivered ? "Delivered" : "Pending"}
                 </span>
               </div>
             </div>
-          <div className="grid grid-cols-1 sm:grid-col-2 md:grid-cols-3 gap-8 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-8">
             <div>
               <h4 className="text-lg font-semibold mb-2"> Payment Info</h4>
-              <p> Payment Method: {orderDetails.paymentMethod} </p>
+              <p> Payment Method: {orderDetails ? orderDetails.paymentMethod : "cash on delivery"} </p>
               <p> Status : {orderDetails.isPaid ? "paid" : "unPaid "}</p>
             </div>
             <div>
               <h4 className="text-lg font-semibold mb-2"> Shipping Info</h4>
-              <p> Shipping Method: {orderDetails.shippingMethod} </p>
+              <p> Shipping Method: {orderDetails.shippingMethod || "open box"} </p>
               <p>
                 Address :{""}
                 {`${orderDetails.shippingAddress.city}, ${orderDetails.shippingAddress.countery}`}
@@ -92,35 +73,38 @@ function OrderDetailspage() {
           {/* {Product List} */}
           <div className="overflow-x-auto">
             <h4 className="text-lg font-semibold mb-4"> Products </h4>
-            <table className="min-w-full text-gray-600 mb-4">
+            <table className="min-w-full text-gray-600 mb-4 border-collapse">
               <thead className="bg-gray-600 text-white">
                 <tr>
-                  <th className="py-2 px-2"> Name </th>
-                  <th className="py-2 px-2"> Unit price </th>
-                  <th className="py-2 px-2"> Quantity </th>
-                  <th className="py-2 px-2"> Total </th>
+                  <th className="py-2 px-2 w-1/5 text-left"> Image </th>
+                  <th className="py-2 px-2 w-1/4 text-left"> Name </th>
+                  <th className="py-2 px-2 w-1/5 text-left"> Unit price </th>
+                  <th className="py-2 px-2 w-1/5 text-left"> Quantity </th>
+                  <th className="py-2 px-2 w-1/5 text-left"> Total </th>
                 </tr>
               </thead>
               <tbody>
                 {orderDetails.orderItems.map((item) => (
                   <tr key={item.productId} className="border-b">
-                    <td className="py-2 px-4 flex items-center ">
+                    <td className="px-2 py-2">
+                      <div className="flex items-center">
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-12 h-12 object-cover rounded-lg mr-4"
+                        className="w-12 h-12 object-cover rounded-lg"
                         loading="lazy"
                       />
                       <Link
                         to={`/product/${item.productId}`}
                         className="text-blue-500 hover:underline"
                       >
-                        {item.name}
                       </Link>
+                      </div>
                     </td>
-                    <td className="py-2 px-4 text-black"> ${item.price} </td>
-                    <td className="py-2 px-4"> ${item.quantity} </td>
-                    <td className="py-2 px-4">
+                    <td className="py-2 px-2"> {item.name}</td>
+                    <td className="py-2 px-2 text-black"> ${item.price} </td>
+                    <td className="py-2 px-2"> {item.quantity} </td>
+                    <td className="py-2 px-2">
                       {" "}
                       ${item.price * item.quantity}{" "}
                     </td>

@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-
 export const fetchUserOrders = createAsyncThunk(
   "orders/fetchUserOrders",
   async (_, { rejectWithValue }) => {
@@ -12,13 +11,14 @@ export const fetchUserOrders = createAsyncThunk(
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
-        }
+        },
       );
+      console.log("order data", response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 // Async thunk to fetch orders details by ID
@@ -30,15 +30,15 @@ export const fetchOrderDetails = createAsyncThunk(
         `${import.meta.env.VITE_BACKEND_URL}/api/orders/${orderId}`,
         {
           headers: {
-            Authorization: `bearer ${localStorage.getItem("userToken")}`,
+            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 const orderSlice = createSlice({

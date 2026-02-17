@@ -1,38 +1,7 @@
 import React, { useEffect } from "react";
-// import women1 from "../assets/womens collection/women1.jpg";
-// import women2 from "../assets/womens collection/women2.jpg";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { clearCart } from "../Redux/slices/cartSlice";
-// const checkout = {
-//   _id: "123456",
-//   createdAt: new Date(),
-//   checkoutItems: [
-//     {
-//       productId: "1",
-//       name: "Jacket",
-//       color: "black",
-//       size: "M",
-//       price: 150,
-//       quantity: 1,
-//       image: women1,
-//     },
-//     {
-//       productId: "2",
-//       name: "leather_Jacket",
-//       color: "blue",
-//       size: "S",
-//       price: 100,
-//       quantity: 2,
-//       image: women2,
-//     },
-//   ],
-//   shippingAddress: {
-//     address: "123 fashion street",
-//     city: "new York",
-//     country: "USA",
-//   },
-// };
 
 function Orderconfirmation() {
   const dispatch = useDispatch();
@@ -45,13 +14,13 @@ function Orderconfirmation() {
       dispatch(clearCart());
       localStorage.removeItem("cart");
     } else {
-      navigate("/my-orders");
+      navigate(`/my-orders`);
     }
   }, [checkout, dispatch, navigate]);
 
   const calculateEstimateDelivery = (createdAt) => {
     const orderDate = new Date(createdAt);
-    orderDate.setDate(orderDate.getDate() + 10); // add 10 days to order  date
+    orderDate.setDate(orderDate.getDate() + 7); // add 7 days to order  date
     return orderDate.toLocaleDateString();
   };
   return (
@@ -107,7 +76,7 @@ function Orderconfirmation() {
             {/* {payment Info} */}
             <div>
               <h4 className="text-lg font-semibold mb-2"> Payment </h4>
-              <p className="text-gray-600"> payPal</p>
+              <p className="text-gray-600"> paid </p>
             </div>
             {/* {Delivery Info} */}
             <div>

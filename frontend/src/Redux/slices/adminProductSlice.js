@@ -23,7 +23,7 @@ export const fetchAdminProducts = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 // New: Async thunk to fetch a single product by ID
@@ -40,7 +40,7 @@ export const fetchProductById = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 // Async function to create a new product
@@ -49,39 +49,38 @@ export const createProduct = createAsyncThunk(
   async (productData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        `${API_URL}/api/products`, // Assuming product creation goes to /api/products
+        `${API_URL}/api/products`,
         productData,
         {
           headers: getAuthHeaders(),
-        }
+        },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 // Update the product
 export const updateProduct = createAsyncThunk(
   "adminProducts/updateProduct",
-  // IMPORTANT: createAsyncThunk expects a single argument.
+  // createAsyncThunk expects a single argument.
   // We pass an object containing both id and productData.
   async ({ id, productData }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `${API_URL}/api/products/${id}`, // Corrected to match your backend PUT route
+        `${API_URL}/api/products/${id}`,
         productData,
         {
           headers: getAuthHeaders(),
-          
-        }
+        },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 // Async thunk to delete product
@@ -96,14 +95,14 @@ export const deleteProduct = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 const adminProductSlice = createSlice({
   name: "adminProducts",
   initialState: {
     products: [],
-    selectedProduct: null, // New state to hold a single product for editing
+    selectedProduct: null,
     loading: false,
     error: null,
   },
@@ -144,17 +143,17 @@ const adminProductSlice = createSlice({
       // Update Product
       .addCase(updateProduct.fulfilled, (state, action) => {
         const index = state.products.findIndex(
-          (product) => product._id === action.payload._id
+          (product) => product._id === action.payload._id,
         );
         if (index !== -1) {
           state.products[index] = action.payload;
         }
-        state.selectedProduct = action.payload; // Update selected product if it's the one being edited
+        state.selectedProduct = action.payload;
       })
       // Delete Product
       .addCase(deleteProduct.fulfilled, (state, action) => {
         state.products = state.products.filter(
-          (product) => product._id !== action.payload
+          (product) => product._id !== action.payload,
         );
       });
   },

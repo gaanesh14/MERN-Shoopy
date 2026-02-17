@@ -3,7 +3,10 @@ import { toast } from "sonner";
 import ProductGrid from "./ProductGrid";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProductDetails, fetchSimilarProducts } from "../../Redux/slices/productSlice";
+import {
+  fetchProductDetails,
+  fetchSimilarProducts,
+} from "../../Redux/slices/productSlice";
 import { addToCart } from "../../Redux/slices/cartSlice";
 
 function ProductDetails({ productId }) {
@@ -16,12 +19,15 @@ function ProductDetails({ productId }) {
   const { id: routeId } = useParams();
   const dispatch = useDispatch();
   const { selectedProduct, loading, error, similarProducts } = useSelector(
-    (state) => state.products
+    (state) => state.products,
   );
   const { user, guestId } = useSelector((state) => state.auth);
 
   // Memoize the product ID to prevent unnecessary re-renders and dispatches
-  const productFetchId = useMemo(() => productId || routeId, [productId, routeId]);
+  const productFetchId = useMemo(
+    () => productId || routeId,
+    [productId, routeId],
+  );
 
   useEffect(() => {
     // Check for a valid MongoDB ObjectId length before dispatching
@@ -72,10 +78,12 @@ function ProductDetails({ productId }) {
     }
 
     if (quantity > selectedProduct.countInStock) {
-      toast.error(`Only ${selectedProduct.countInStock} items are in stock.`, { duration: 1000 });
+      toast.error(`Only ${selectedProduct.countInStock} items are in stock.`, {
+        duration: 1000,
+      });
       return;
     }
-    
+
     if (quantity <= 0) {
       toast.error("Quantity must be at least 1.", { duration: 1000 });
       return;
@@ -92,7 +100,7 @@ function ProductDetails({ productId }) {
           color: selectedProduct.color?.length > 0 ? selectColor : undefined,
           guestId,
           userId: user?._id,
-        })
+        }),
       ).unwrap();
       toast.success("Product added to cart!", { duration: 1000 });
     } catch (err) {
@@ -100,12 +108,11 @@ function ProductDetails({ productId }) {
       toast.error("Failed to add product to cart.", { duration: 1000 });
     } finally {
       setIsButtonDisable(false);
-        setSelectColor('')
-  setSelectSize('')
-  setQuantity(1)
+      setSelectColor("");
+      setSelectSize("");
+      setQuantity(1);
     }
   };
-
 
   // Condition to disable the Add to Cart button
   const isAddToCartDisabled =
@@ -142,7 +149,9 @@ function ProductDetails({ productId }) {
                 src={selectedProduct.images[0].url}
                 alt={`${selectedProduct.name} thumbnail`}
                 className={`w-20 h-20 object-cover rounded-lg cursor-pointer border ${
-                  mainImage === selectedProduct.images[0].url ? "border-black border-2" : "border-gray-300"
+                  mainImage === selectedProduct.images[0].url
+                    ? "border-black border-2"
+                    : "border-gray-300"
                 }`}
                 onClick={() => setMainImage(selectedProduct.images[0].url)}
                 loading="lazy"
@@ -176,7 +185,9 @@ function ProductDetails({ productId }) {
                 src={imageObj.url}
                 alt={`${selectedProduct.name} thumbnail ${index}`}
                 className={`w-20 h-20 object-cover rounded-lg cursor-pointer border flex-shrink-0 ${
-                  mainImage === imageObj.url ? "border-black border-2" : "border-gray-300"
+                  mainImage === imageObj.url
+                    ? "border-black border-2"
+                    : "border-gray-300"
                 }`}
                 onClick={() => setMainImage(imageObj.url)}
                 loading="lazy"
@@ -210,44 +221,50 @@ function ProductDetails({ productId }) {
             </p>
 
             {/* Color Selection */}
-            {Array.isArray(selectedProduct.color)  && (selectedProduct.color.length>0) && (
-              <div className="mb-4 mt-6">
-                <p className="text-gray-800 font-semibold mb-2">Color:</p>
-                <div className="flex flex-wrap gap-2">
-                  {selectedProduct.color.map((colorOption, index) => (
-                    <button
-                      key={colorOption || index}
-                      onClick={() => setSelectColor(colorOption)}
-                      className={`w-8 h-8 rounded-full border ${
-                        selectColor === colorOption ? "border-black border-4" : "border-gray-300"
-                      }`}
-                      style={{ backgroundColor: colorOption.toLowerCase() }}
-                      title={colorOption}
-                    ></button>
-                  ))}
+            {Array.isArray(selectedProduct.color) &&
+              selectedProduct.color.length > 0 && (
+                <div className="mb-4 mt-6">
+                  <p className="text-gray-800 font-semibold mb-2">Color:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProduct.color.map((colorOption, index) => (
+                      <button
+                        key={colorOption || index}
+                        onClick={() => setSelectColor(colorOption)}
+                        className={`w-8 h-8 rounded-full border ${
+                          selectColor === colorOption
+                            ? "border-black border-4"
+                            : "border-gray-300"
+                        }`}
+                        style={{ backgroundColor: colorOption.toLowerCase() }}
+                        title={colorOption}
+                      ></button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {/* Size Selection */}
-            {Array.isArray(selectedProduct.size) && (selectedProduct.size.length>0) && (
-              <div className="mb-4">
-                <p className="text-gray-700 font-semibold mb-2">Size:</p>
-                <div className="flex flex-wrap gap-2">
-                  {selectedProduct.size?.map((sizeOption, index) => (
-                    <button
-                      key={sizeOption || index}
-                      onClick={() => setSelectSize(sizeOption)}
-                      className={`px-4 py-2 rounded-md border text-sm ${
-                        selectSize === sizeOption ? "bg-black text-white" : "hover:bg-gray-100"
-                      }`}
-                    >
-                      {sizeOption}
-                    </button>
-                  ))}
+            {Array.isArray(selectedProduct.size) &&
+              selectedProduct.size.length > 0 && (
+                <div className="mb-4">
+                  <p className="text-gray-700 font-semibold mb-2">Size:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedProduct.size?.map((sizeOption, index) => (
+                      <button
+                        key={sizeOption || index}
+                        onClick={() => setSelectSize(sizeOption)}
+                        className={`px-4 py-2 rounded-md border text-sm ${
+                          selectSize === sizeOption
+                            ? "bg-black text-white"
+                            : "hover:bg-gray-100"
+                        }`}
+                      >
+                        {sizeOption}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             <div className="mb-6 mt-6">
               <p className="text-gray-700 font-semibold mb-2">Quantity:</p>
@@ -267,11 +284,12 @@ function ProductDetails({ productId }) {
                 >
                   +
                 </button>
-                {selectedProduct.countInStock < 10 && selectedProduct.countInStock > 0 && (
-                  <span className="text-sm text-red-500 ml-4">
-                    Only {selectedProduct.countInStock} left in stock!
-                  </span>
-                )}
+                {selectedProduct.countInStock < 10 &&
+                  selectedProduct.countInStock > 0 && (
+                    <span className="text-sm text-red-500 ml-4">
+                      Only {selectedProduct.countInStock} left in stock!
+                    </span>
+                  )}
                 {selectedProduct.countInStock === 0 && (
                   <span className="text-sm text-red-600 ml-4 font-semibold">
                     Out of Stock!
@@ -284,14 +302,16 @@ function ProductDetails({ productId }) {
               onClick={handleAddToCart}
               disabled={isAddToCartDisabled}
               className={`bg-black text-white py-3 px-8 rounded-md w-full text-lg font-semibold transition duration-300 ease-in-out ${
-                isAddToCartDisabled ? "cursor-not-allowed opacity-50" : "hover:bg-gray-800"
+                isAddToCartDisabled
+                  ? "cursor-not-allowed opacity-50"
+                  : "hover:bg-gray-800"
               }`}
             >
               {isButtonDisable
                 ? "Adding to Cart..."
                 : selectedProduct.countInStock === 0
-                ? "OUT OF STOCK"
-                : "ADD TO CART"}
+                  ? "OUT OF STOCK"
+                  : "ADD TO CART"}
             </button>
           </div>
         </div>

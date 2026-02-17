@@ -39,7 +39,7 @@ router.post("/", async (req, res) => {
         (p) =>
           p.productId.toString() === productId &&
           p.size === size &&
-          p.color === color
+          p.color === color,
       );
 
       if (productIndex > -1) {
@@ -59,7 +59,7 @@ router.post("/", async (req, res) => {
       // Recalculate total price
       cart.totalprice = cart.products.reduce(
         (acc, item) => acc + item.price * item.quantity,
-        0
+        0,
       );
       await cart.save();
       return res.status(200).json(cart);
@@ -101,7 +101,7 @@ router.put("/", async (req, res) => {
       (p) =>
         p.productId.toString() === productId &&
         p.size === size &&
-        p.color === color
+        p.color === color,
     );
 
     if (productIndex > -1) {
@@ -112,7 +112,7 @@ router.put("/", async (req, res) => {
       }
       cart.totalprice = cart.products.reduce(
         (acc, item) => acc + item.price * item.quantity,
-        0
+        0,
       );
       await cart.save();
       return res.status(200).json(cart);
@@ -139,14 +139,14 @@ router.delete("/", async (req, res) => {
       (p) =>
         p.productId.toString() === productId &&
         p.size === size &&
-        p.color === color
+        p.color === color,
     );
     if (productIndex > -1) {
       cart.products.splice(productIndex, 1);
 
       cart.totalprice = cart.products.reduce(
         (acc, item) => acc + item.price * item.quantity,
-        0
+        0,
       );
       await cart.save();
       return res.status(200).json(cart);
@@ -193,7 +193,7 @@ router.post("/merge", protect, async (req, res) => {
             (item) =>
               item.productId.toString === guestItem.productId.toString() &&
               item.size === guestItem.size &&
-              item.color === guestItem.color
+              item.color === guestItem.color,
           );
           if (productIndex > -1) {
             // items exists in the user cart, update the quantity
@@ -205,7 +205,7 @@ router.post("/merge", protect, async (req, res) => {
         });
         userCart.totalprice = userCart.products.reduce(
           (acc, item) => acc + item.price * item.quantity,
-          0
+          0,
         );
         await userCart.save();
         // Remove the guest cart after merging

@@ -4,12 +4,25 @@ import axios from "axios";
 // Thunk: Fetch products with filters
 export const fetchProductsByFilters = createAsyncThunk(
   "products/fetchByFilters",
-  async ({
-    collections, size, color, gender, minPrice, maxPrice,
-    sortBy, search, category, material, brand, limit,
-  }, { rejectWithValue }) => {
+  async (
+    {
+      collections,
+      size,
+      color,
+      gender,
+      minPrice,
+      maxPrice,
+      sortBy,
+      search,
+      category,
+      material,
+      brand,
+      limit,
+    },
+    { rejectWithValue },
+  ) => {
     //console.log("collections:",collections);
-    
+
     try {
       const query = new URLSearchParams();
       if (collections) query.append("collections", collections);
@@ -26,13 +39,13 @@ export const fetchProductsByFilters = createAsyncThunk(
       if (limit) query.append("limit", limit);
 
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/products?${query.toString()}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/products?${query.toString()}`,
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 // Thunk: Fetch single product
@@ -41,15 +54,18 @@ export const fetchProductDetails = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/products/${id}`,
       );
       //console.log(response.data)
       return response.data;
     } catch (error) {
-      console.error("Error fetching product details:", error.response?.data?.message || error.message);
+      console.error(
+        "Error fetching product details:",
+        error.response?.data?.message || error.message,
+      );
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 // Thunk: Update product
@@ -64,14 +80,17 @@ export const updateProduct = createAsyncThunk(
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {
-      console.error("Error updating product:", error.response?.data?.message || error.message);
+      console.error(
+        "Error updating product:",
+        error.response?.data?.message || error.message,
+      );
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 // Thunk: Fetch similar products
@@ -80,14 +99,17 @@ export const fetchSimilarProducts = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/products/similar/${id}`
+        `${import.meta.env.VITE_BACKEND_URL}/api/products/similar/${id}`,
       );
       return response.data;
     } catch (error) {
-      console.error("Error fetching similar products:", error.response?.data?.message || error.message);
+      console.error(
+        "Error fetching similar products:",
+        error.response?.data?.message || error.message,
+      );
       return rejectWithValue(error.response?.data?.message || error.message);
     }
-  }
+  },
 );
 
 const productsSlice = createSlice({
@@ -99,9 +121,17 @@ const productsSlice = createSlice({
     loading: false,
     error: null,
     filters: {
-      category: "", size: "", color: "", gender: "",
-      minPrice: "", maxPrice: "", sortBy: "", search: "",
-      collections: "", material: "", brand: ""
+      category: "",
+      size: "",
+      color: "",
+      gender: "",
+      minPrice: "",
+      maxPrice: "",
+      sortBy: "",
+      search: "",
+      collections: "",
+      material: "",
+      brand: "",
     },
   },
   reducers: {
@@ -110,9 +140,17 @@ const productsSlice = createSlice({
     },
     clearFilters: (state) => {
       state.filters = {
-        category: "", size: "", color: "", gender: "",
-        minPrice: "", maxPrice: "", sortBy: "", search: "",
-        collections: "", material: "",brand:""
+        category: "",
+        size: "",
+        color: "",
+        gender: "",
+        minPrice: "",
+        maxPrice: "",
+        sortBy: "",
+        search: "",
+        collections: "",
+        material: "",
+        brand: "",
       };
     },
   },
@@ -156,7 +194,7 @@ const productsSlice = createSlice({
         state.loading = false;
         const updatedProduct = action.payload;
         const index = state.products.findIndex(
-          (product) => product._id === updatedProduct._id
+          (product) => product._id === updatedProduct._id,
         );
         if (index !== -1) {
           state.products[index] = updatedProduct;
@@ -175,7 +213,9 @@ const productsSlice = createSlice({
       })
       .addCase(fetchSimilarProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.similarProducts = Array.isArray(action.payload) ? action.payload : [];
+        state.similarProducts = Array.isArray(action.payload)
+          ? action.payload
+          : [];
       })
       .addCase(fetchSimilarProducts.rejected, (state, action) => {
         state.loading = false;

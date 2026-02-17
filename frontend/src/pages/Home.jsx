@@ -11,43 +11,46 @@ import { useEffect, useState } from "react";
 import { fetchProductsByFilters } from "../Redux/slices/productSlice";
 import axios from "axios";
 
-
 function Home() {
-     const dispatch = useDispatch();
-     const {products, loading, error} = useSelector((state) => state.products)
-     const [bestSellerProduct, setBestSellerProduct] = useState(null);
+  const dispatch = useDispatch();
+  const { products, loading, error } = useSelector((state) => state.products);
+  const [bestSellerProduct, setBestSellerProduct] = useState(null);
 
-     useEffect(() => {
-       // Fetch Products from a specific collection.
-      dispatch(
+  useEffect(() => {
+    // Fetch Products from a specific collection.
+    dispatch(
       fetchProductsByFilters({
         gender: "Women",
-        category:"Bottom Wear",
-        limit : 8,
-      })
+        category: "Bottom Wear",
+        limit: 8,
+      }),
     );
     // fetch best seller product
-       const fetchBestSeller = async() => {
-        try {
-          const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/products/best-seller`);
-          setBestSellerProduct(response.data);
-        } catch (error) {
-           console.error(error)
-        }
-       }
-       fetchBestSeller()
-     },[dispatch]);
+    const fetchBestSeller = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/products/best-seller`,
+        );
+        setBestSellerProduct(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchBestSeller();
+  }, [dispatch]);
   return (
-    <div>
+    <div className="mt-16">
       <Hero />
       <GenderCollection />
       <NewArrivals />
 
       {/* {Best Seller} */}
-      <h2 className='text-3xl text-center font-bold mb-4'> Best Seller </h2>
-            {bestSellerProduct ? (<ProductDetails productId={bestSellerProduct._id} />) : (
-                <p className='text-center'> Loading best seller product...</p>
-            )}
+      <h2 className="text-3xl text-center font-bold mb-4"> Best Seller </h2>
+      {bestSellerProduct ? (
+        <ProductDetails productId={bestSellerProduct._id} />
+      ) : (
+        <p className="text-center"> Loading best seller product...</p>
+      )}
 
       <div className="container mx-auto ">
         <h2 className="text-3xl text-center font-bold mb-4">
