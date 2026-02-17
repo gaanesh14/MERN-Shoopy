@@ -16,9 +16,9 @@ function NewArrivals() {
     const fetchNewArrivals = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/products/new-arrivals`
+          `${import.meta.env.VITE_BACKEND_URL}/api/products/new-arrivals`,
         );
-       // console.log("new arrivals:", response.data);
+        // console.log("new arrivals:", response.data);
         setNewArrivals(response.data);
       } catch (error) {
         console.error("Error fetching new arrivals:", error);
@@ -52,7 +52,7 @@ function NewArrivals() {
     const container = scrollRef.current;
     setCanScrollLeft(container.scrollLeft > 0);
     setCanScrollRight(
-      container.scrollLeft + container.clientWidth < container.scrollWidth
+      container.scrollLeft + container.clientWidth < container.scrollWidth,
     );
   };
 

@@ -4,7 +4,7 @@ import multer from "multer";
 import cloudinary from "cloudinary";
 import streamifier from "streamifier";
 import dotenv from "dotenv";
-import { protect,admin } from "../Middleware/authMiddleware.js";
+import { protect, admin } from "../Middleware/authMiddleware.js";
 dotenv.config();
 
 cloudinary.v2.config({

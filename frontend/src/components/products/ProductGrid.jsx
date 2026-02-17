@@ -18,7 +18,9 @@ function ProductGrid({ products, loading, error }) {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"> {/* Increased gap */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      {" "}
+      {/* Increased gap */}
       {products.map((product, index) => (
         <Link
           key={product._id || index}
@@ -26,8 +28,12 @@ function ProductGrid({ products, loading, error }) {
           className="block group" // Added group for hover effects
           onClick={() => window.scrollTo(0, 0)} // Scroll to top on product click
         >
-          <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300"> {/* Added shadow and hover effect */}
-            <div className="w-full h-80 mb-4 overflow-hidden rounded-lg"> {/* Fixed height for image container */}
+          <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+            {" "}
+            {/* Added shadow and hover effect */}
+            <div className="w-full h-80 mb-4 overflow-hidden rounded-lg">
+              {" "}
+              {/* Fixed height for image container */}
               {product.images && product.images.length > 0 ? (
                 <img
                   src={product.images[0].url}
@@ -41,7 +47,9 @@ function ProductGrid({ products, loading, error }) {
                 </div>
               )}
             </div>
-            <h3 className="text-sm font-semibold mb-2 text-gray-800 line-clamp-2 text-nowrap"> {/* Added line-clamp-2 for name */}
+            <h3 className="text-sm font-semibold mb-2 text-gray-800 line-clamp-2 text-nowrap">
+              {" "}
+              {/* Added line-clamp-2 for name */}
               {product.name}
             </h3>
             {product.discountPrice && product.discountPrice < product.price ? (

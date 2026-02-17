@@ -13,10 +13,11 @@ function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [navDrawerOpen, setNavDrawerOpen] = useState(false);
   const { cart } = useSelector((state) => state.cart);
-  const {user} = useSelector((state) => state.auth);
-  
+  const { user } = useSelector((state) => state.auth);
+
   const cartItemCount =
-    cart?.products?.reduce((total, product) => total + product.quantity, 0) ||0;
+    cart?.products?.reduce((total, product) => total + product.quantity, 0) ||
+    0;
 
   const toggleNavDrawer = () => {
     setNavDrawerOpen(!navDrawerOpen);
@@ -28,9 +29,10 @@ function Navbar() {
   };
   return (
     <div>
-      <nav className="container mx-auto flex items-center justify-between px-2 py-2">
+      <nav className="fixed top-0 left-0 w-full bg-gray-100 shadow-md z-50">
+        <div className="container mx-auto flex items-center justify-between px-2 py-2"> 
         {/* {Logo-left} */}
-        <div className="">
+        <div>
           <img src={logo} alt="logo" className="w-10 h-8 rounded-lg ml-4" />
           <Link to="/" className="text-lg font-medium text-blue-500">
             {" "}
@@ -70,22 +72,21 @@ function Navbar() {
         </div>
         {/* {Right Icons} */}
         <div className="flex items-center space-x-4 ">
-          {user && user.role==="admin" && (
-
-                <Link
-            to="/admin"
-            className="block bg-black px-2 rounded text-sm text-white"
-          >
-            {" "}
-            Admin{" "}
-          </Link>
+          {user && user.role === "admin" && (
+            <Link
+              to="/admin"
+              className="block bg-black px-2 rounded text-sm text-white"
+            >
+              {" "}
+              Admin{" "}
+            </Link>
           )}
-          
+
           <Link to="/profile" className="hover:text-black">
             <HiOutlineUser className="h-6 w-6 text-gray-700 hover:text-blue-600" />
           </Link>
-           <div className="overflow-hidden">
-            <Searchbar className='hover:bg-gray-200'/>
+          <div className="overflow-hidden">
+            <Searchbar className="hover:bg-gray-200" />
           </div>
           <button
             onClick={toggleCartDrawer}
@@ -97,11 +98,12 @@ function Navbar() {
                 {cartItemCount}
               </span>
             )}
-          </button>         
+          </button>
           <button onClick={toggleNavDrawer} className="md:hidden">
             <HiBars3 className="h-6 w-6 text-gray-600" />
           </button>
         </div>
+      </div>
       </nav>
       <CartDrawer drawerOpen={drawerOpen} toggleCartDrawer={toggleCartDrawer} />
 

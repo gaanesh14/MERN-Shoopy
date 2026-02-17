@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import PaypalButton from "./PaypalButton";
+// import PaypalButton from "./PaypalButton";
 import { createCheckout } from "../../Redux/slices/checkoutSlice";
+import {clearCart} from '../../Redux/slices/cartSlice'
 import axios from "axios";
 import CartContents from "./CartContents";
 
@@ -27,7 +28,7 @@ function Checkout() {
   // Ensure cart is loaded
   useEffect(() => {
     if (!cart || !cart.products || cart.products.length === 0) {
-      navigate("/");
+     navigate(`/order-confirmation`)
     }
   }, [cart,navigate,CartContents]);
 
@@ -55,8 +56,8 @@ function Checkout() {
 
   const handlePaymentSuccess = async (details) => {
     try {
-      await axios.put(
-        `${import.meta.env.VITE.BACKEND_URL}/api/checkout/${checkOutId}/pay`,
+      const response = await axios.put(
+        `${import.meta.env.VITE_BACKEND_URL}/api/checkout/${checkOutId}/pay`,
         { paymentStatus: "paid", paymentDetails: details },
         {
           headers: {
@@ -64,25 +65,12 @@ function Checkout() {
           },
         }
       );
-
-      await handleFinalizeCheckout(checkOutId);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleFinalizeCheckout = async (checkOutId) => {
-    try {
-      await axios.post(
-        `${import.meta.env.VITE.BACKEND_URL}/api/checkout/${checkOutId}/finalize`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("userToken")}`,
-          },
-        }
-      );
-      navigate("/order-confirmation");
+      // clear cart
+      dispatch(clearCart())
+      // clear local storage cart
+      localstorage.removeItems("cart")
+      //await handleFinalizeCheckout(checkOutId);
+      navigate(`/orderdetails/${response.data._id}`);
     } catch (error) {
       console.error(error);
     }
@@ -220,13 +208,21 @@ function Checkout() {
               </button>
             ) : (
               <div>
-                <h3 className="text-lg mb-4">Pay with PayPal</h3>
-                <PaypalButton
-                  amount={cart.totalPrice}
-                  onSuccess={handlePaymentSuccess}
-                  onError={() => alert("Payment failed. Try again.")}
-                />
+                 <button
+                 className="text-lg mb-4 bg-blue-600 text-white rounded-lg p-2 mx-[10rem]"
+                 onClick={() => handlePaymentSuccess({ id: "fake-payment-id" })}
+                 >
+                    Pay Here
+                 </button>
               </div>
+              // <div>
+              //   <h3 className="text-lg mb-4">Pay with PayPal</h3>
+              //   <PaypalButton
+              //     amount={cart.totalPrice}
+              //     onSuccess={handlePaymentSuccess}
+              //     onError={() => alert("Payment failed. Try again.")}
+              //   />
+              // </div>
             )}
           </div>
         </form>

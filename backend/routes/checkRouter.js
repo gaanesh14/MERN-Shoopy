@@ -1,6 +1,5 @@
 import express from "express";
 import checkOut from "../models/checkOutModel.js";
-import Products from "../models/productModels.js";
 import orders from "../models/orderModel.js";
 import { protect } from "../Middleware/authMiddleware.js";
 import Cart from "../models/cartModels.js";
@@ -36,88 +35,60 @@ router.post("/", protect, async (req, res) => {
 });
 
 // @route PUT /api/checkout/:id/pay
+// @route PUT /api/checkout/:id/pay
 router.put("/:id/pay", protect, async (req, res) => {
   const { paymentStatus, paymentDetails } = req.body;
 
   try {
     const checkout = await checkOut.findById(req.params.id);
+
     if (!checkout) {
       return res.status(404).json({ message: "Checkout not found" });
     }
 
-    // ✅ Validate quantity before saving
-    // const hasInvalidQuantity = checkout.checkoutItems.some(
-    //   (item) => !item.quantity
-    // );
-    // if (hasInvalidQuantity) {
-    //   return res
-    //     .status(400)
-    //     .json({
-    //       message: "One or more checkout items are missing a valid quantity",
-    //     });
-    // }
-
-    if (paymentStatus === "paid") {
-      checkout.isPaid = true;
-      checkout.paymentStatus = paymentStatus;
-      checkout.paymentDetails = paymentDetails;
-      checkout.paidAt = new Date();
-      await checkout.save();
-      res.status(200).json(checkout);
-    } else {
-      res.status(400).json({ message: "Invalid payment status" });
+    // Prevent double payment
+    if (checkout.isPaid) {
+      return res.status(400).json({ message: "Checkout already paid" });
     }
+
+    if (paymentStatus !== "paid") {
+      return res.status(400).json({ message: "Invalid payment status" });
+    }
+
+    // Mark checkout as paid
+    checkout.isPaid = true;
+    checkout.paymentStatus = "paid";
+    checkout.paymentDetails = paymentDetails;
+    checkout.paidAt = new Date();
+    await checkout.save();
+
+    // Create Order
+    const finalOrder = await orders.create({
+      user: checkout.user,
+      orderItems: checkout.checkoutItems,
+      shippingAddress: checkout.shippingAddress,
+      paymentMethod: checkout.paymentMethod,
+      totalPrice: checkout.totalPrice,
+      isPaid: true,
+      paidAt: checkout.paidAt,
+      isDelivered: false,
+      paymentStatus: "paid",
+      paymentDetails: checkout.paymentDetails,
+    });
+
+    //  Delete Cart
+    await Cart.findOneAndDelete({ user: checkout.user });
+
+    // Optional: Delete checkout session
+    await checkOut.findByIdAndDelete(checkout._id);
+
+    // Return ORDER (important)
+    res.status(200).json(finalOrder);
+
   } catch (error) {
-    console.error("Error updating payment status:", error);
+    console.error("Payment processing error:", error);
     res.status(500).json({ message: "Server error" });
   }
 });
-
-// @route POST /api/checkout/:id/finalize
-router.post("/:id/finalize", protect, async (req, res) => {
-  try {
-    const checkout = await checkOut.findById(req.params.id);
-
-    if (!checkout) {
-      return res.status(404).json({ message: "Checkout not found" });
-    }
-
-    // if (checkout.isPaid && !checkout.isFinalized) {
-    //   // Validate quantity
-    //   const hasInvalidQuantity = checkout.checkoutItems.some(
-    //     (item) => !item.quantity
-    //   );
-    //   if (hasInvalidQuantity) {
-    //     return res
-    //       .status(400)
-    //       .json({ message: "One or more items have missing quantity" });
-    //   }
-
-      const finalOrder = await orders.create({
-        user: checkout.user,
-        orderItems: checkout.checkoutItems, // ✅ use proper field
-        shippingAddress: checkout.shippingAddress,
-        paymentMethod: checkout.paymentMethod,
-        totalPrice: checkout.totalPrice,
-        isPaid: true,
-        paidAt: checkout.paidAt,
-        isDelivered: false,
-        paymentStatus: "paid",
-        paymentDetails: checkout.paymentDetails,
-      });
-
-      checkout.isFinalized = true;
-      checkout.finalizedAt = Date.now();
-      await checkout.save();
-
-      await Cart.findOneAndDelete({ user: checkout.user });
-      res.status(201).json(finalOrder);
-    }
-    catch (error) {
-    console.error("Error finalizing checkout:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-})
-
 
 export default router;

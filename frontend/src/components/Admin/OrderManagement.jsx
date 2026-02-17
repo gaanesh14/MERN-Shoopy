@@ -1,31 +1,46 @@
-import React, { useEffect } from "react";
-import { useNavigate, } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {fetchAllOrders} from '../../Redux/slices/adminOrderSlice'
-
+import {
+  fetchAllOrders,
+  updateOrderStatus,
+} from "../../Redux/slices/adminOrderSlice";
 
 function OrderManagement() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const{user} = useSelector((state) => state.auth);
-  const {order,loading,error} = useSelector((state) => state.adminOrders);
+  const { user } = useSelector((state) => state.auth);
+  const { orders, loading, error } = useSelector((state) => state.adminOrders);
 
   useEffect(() => {
-    if(!user || user.role !== "admin"){
-      navigate('/');
-    }else{
-      dispatch(fetchAllOrders())
+    if (!user || user.role !== "admin") {
+      navigate("/");
+    } else {
+      dispatch(fetchAllOrders());
     }
-  },[dispatch,user,navigate]);
-
+  }, [dispatch, user, navigate]);
 
   const handleStatusChange = (orderId, status) => {
+    dispatch(updateOrderStatus({ orderId, status }));
     console.log({ id: orderId, status: status });
   };
 
-  if(loading) return <p> Loading...</p>
-  if(error) return <p> Error: {error}</p>
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Delivered":
+        return "bg-green-500 text-white";
+      case "Processing":
+        return "bg-yellow-500 text-white";
+      case "Cancelled":
+        return "bg-red-500 text-white";
+      default:
+        return "bg-gray-500 text-white";
+    }
+  };
+
+  if (loading) return <p> Loading...</p>;
+  if (error) return <p> Error: {error}</p>;
   return (
     <div className="max-w-7xl mx-auto p-6">
       <h2 className="text-2xl font-bold mb-6 "> Order Management </h2>
@@ -41,8 +56,8 @@ function OrderManagement() {
             </tr>
           </thead>
           <tbody>
-            {order?.length > 0 ? (
-              order?.map((order) => (
+            {orders?.length > 0 ? (
+              orders?.map((order) => (
                 <tr
                   key={order._id}
                   className="border-b hover:bg-gray-50 cursor-pointer"
@@ -58,10 +73,10 @@ function OrderManagement() {
                       onChange={(e) =>
                         handleStatusChange(order._id, e.target.value)
                       }
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2"
+                      className={`border text-sm rounded-lg p-2 bg-black ${getStatusColor(order.status)}`}
                     >
                       <option value="Processing"> Processing </option>
-                      <option value="Shipping"> Shipped </option>
+                      <option value="Shipped"> Shipped </option>
                       <option value="Delivered"> Delivered </option>
                       <option value="Cancelled"> Cancelled </option>
                     </select>
@@ -69,7 +84,11 @@ function OrderManagement() {
                   <td className="p-4">
                     <button
                       onClick={() => handleStatusChange(order._id, "Delivered")}
-                      className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                      className={`px-4 py-2 rounded ${
+                        order.status === "Delivered"
+                          ? "bg-green-400 text-black"
+                          : "bg-gray-500 text-white"
+                      }`}
                     >
                       Mark as Delivered
                     </button>

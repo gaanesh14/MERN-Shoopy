@@ -1,4 +1,8 @@
-import {createSlice,createAsyncThunk,__DO_NOT_USE__ActionTypes} from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  __DO_NOT_USE__ActionTypes,
+} from "@reduxjs/toolkit";
 import axios from "axios";
 
 export const fetchAllOrders = createAsyncThunk(
@@ -11,34 +15,35 @@ export const fetchAllOrders = createAsyncThunk(
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
-        }
+        },
       );
+      console.log("admin orders:", response.data);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 // update order delivery status
 export const updateOrderStatus = createAsyncThunk(
   "adminOrders/updateOrderStatus",
-  async ({ id, status }, { rejectWithValue }) => {
+  async ({ orderId, status }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/api/admin/orders/${orderId}/status`,
         { status },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 // delete an order
@@ -52,13 +57,13 @@ export const deleteOrder = createAsyncThunk(
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
-        }
+        },
       );
       return id;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 const adminOrderSlice = createSlice({
@@ -98,7 +103,7 @@ const adminOrderSlice = createSlice({
         const updatedOrder = action.payload;
         console.log(action.payload);
         const orderIndex = state.orders.findIndex(
-          (order) => order._id === updatedOrder._id
+          (order) => order._id === updatedOrder._id,
         );
         if (orderIndex !== -1) {
           state.orders[orderIndex] = updatedOrder;
@@ -107,7 +112,7 @@ const adminOrderSlice = createSlice({
       // delete order
       .addCase(deleteOrder.fulfilled, (state, action) => {
         state.orders = state.orders.filter(
-          (order) => order._id !== action.payload
+          (order) => order._id !== action.payload,
         );
       });
   },

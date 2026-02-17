@@ -23,7 +23,7 @@ router.post("/register", async (req, res) => {
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-   //  { expiresIn: "7d" },
+      //  { expiresIn: "7d" },
       (err, token) => {
         if (err) {
           console.error("JWT signing error (register):", err);
@@ -39,10 +39,10 @@ router.post("/register", async (req, res) => {
           },
           token,
         });
-      }
+      },
     );
   } catch (error) {
-    console.error("Register error:", error); // Use console.error for errors
+    console.error("Register error:", error);
     res.status(500).send("server error"); // Removed 'error' from send, as it expects a string or buffer
   }
 });
@@ -77,7 +77,7 @@ router.post("/login", async (req, res) => {
 
     // 4. Sign JWT
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-     //expiresIn: "7d",
+      //expiresIn: "7d",
     });
 
     // 5. Respond with user info and token

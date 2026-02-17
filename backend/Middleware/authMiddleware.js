@@ -8,7 +8,9 @@ export const protect = async (req, res, next) => {
   if (authHeader && authHeader.startsWith("Bearer")) {
     const parts = authHeader.split(" ");
     if (parts.length !== 2) {
-      return res.status(401).json({ message: "Malformed authorization header" });
+      return res
+        .status(401)
+        .json({ message: "Malformed authorization header" });
     }
     token = parts[1].trim();
 
@@ -23,7 +25,9 @@ export const protect = async (req, res, next) => {
       const user = await User.findById(decoded.id).select("-password");
       if (!user) {
         console.error("User not found for ID:", decoded.id);
-        return res.status(401).json({ message: "Not authorized, user not found" });
+        return res
+          .status(401)
+          .json({ message: "Not authorized, user not found" });
       }
 
       req.user = user;
@@ -34,7 +38,9 @@ export const protect = async (req, res, next) => {
       return res.status(401).json({ message: "Not authorized, token failed" });
     }
   } else {
-    return res.status(401).json({ message: "Not authorized, no token provided" });
+    return res
+      .status(401)
+      .json({ message: "Not authorized, no token provided" });
   }
 };
 
@@ -44,4 +50,3 @@ export const admin = (req, res, next) => {
   }
   return res.status(403).json({ message: "Not authorized as an admin" });
 };
-

@@ -84,14 +84,15 @@ function Filtersidebar() {
   const handleColorChange = (colorValue) => {
     let newFilters = { ...filters };
     //console.log(newFilters);
-    const currentColors = Array.isArray(newFilters.color)? newFilters.color : [];
+    const currentColors = Array.isArray(newFilters.color)
+      ? newFilters.color
+      : [];
     if (currentColors.includes(colorValue)) {
       newFilters.color = currentColors.filter((c) => c !== colorValue);
       //console.log(newFilters);
     } else {
       newFilters.color = [...currentColors, colorValue];
       //console.log("result:",newFilters);
-      
     }
     setFilters(newFilters);
     updateURLParams(newFilters);

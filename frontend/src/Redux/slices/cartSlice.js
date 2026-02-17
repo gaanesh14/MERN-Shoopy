@@ -28,13 +28,13 @@ export const fetchCart = createAsyncThunk(
         `${import.meta.env.VITE_BACKEND_URL}/api/cart`,
         {
           params: { userId, guestId },
-        }
+        },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 // Add an item to the cart
@@ -42,18 +42,18 @@ export const addToCart = createAsyncThunk(
   "cart/addToCart",
   async (
     { productId, quantity, size, color, guestId, userId },
-    { rejectWithValue }
+    { rejectWithValue },
   ) => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/cart`,
-        { productId, quantity, size, color, guestId, userId }
+        { productId, quantity, size, color, guestId, userId },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 // Update cart item quantity
@@ -61,18 +61,18 @@ export const updateCartItemQuantity = createAsyncThunk(
   "cart/updateCartItemQuantity",
   async (
     { productId, quantity, guestId, userId, size, color },
-    { rejectWithValue }
+    { rejectWithValue },
   ) => {
     try {
       const response = await axios.put(
         `${import.meta.env.VITE_BACKEND_URL}/api/cart`,
-        { productId, quantity, guestId, userId, size, color }
+        { productId, quantity, guestId, userId, size, color },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 // Remove an item from the cart
@@ -89,7 +89,7 @@ export const removeFromCart = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 // Merge guest cart into user cart
@@ -104,13 +104,13 @@ export const mergeCart = createAsyncThunk(
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 const cartSlice = createSlice({
@@ -195,8 +195,7 @@ const cartSlice = createSlice({
       })
       .addCase(removeFromCart.rejected, (state, action) => {
         state.loading = false;
-        state.error =
-          action.payload?.message || "Failed to remove from cart";
+        state.error = action.payload?.message || "Failed to remove from cart";
       })
       .addCase(mergeCart.pending, (state) => {
         state.loading = true;

@@ -10,7 +10,7 @@ import {
 function ProductManagement() {
   const dispatch = useDispatch();
   const { products, loading, error } = useSelector(
-    (state) => state.adminProducts
+    (state) => state.adminProducts,
   );
 
   useEffect(() => {

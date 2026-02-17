@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-
 // Async thunk to create a checkout session
 export const createCheckout = createAsyncThunk(
   "checkout/createCheckout",
@@ -14,13 +13,13 @@ export const createCheckout = createAsyncThunk(
           headers: {
             Authorization: `Bearer ${localStorage.getItem("userToken")}`,
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
-  }
+  },
 );
 
 const checkoutSlice = createSlice({
@@ -34,13 +33,13 @@ const checkoutSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(createCheckout.pending, (state) => {
-        (state.loading = true), (state.error = null);
+        ((state.loading = true), (state.error = null));
       })
       .addCase(createCheckout.fulfilled, (state, action) => {
-        (state.loading = false), (state.checkout = action.payload);
+        ((state.loading = false), (state.checkout = action.payload));
       })
       .addCase(createCheckout.rejected, (state, action) => {
-        (state.loading = false), (state.error = action.payload.message);
+        ((state.loading = false), (state.error = action.payload.message));
       });
   },
 });

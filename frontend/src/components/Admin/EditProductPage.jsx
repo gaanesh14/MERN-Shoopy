@@ -15,7 +15,7 @@ function EditProductPage() {
 
   // Correct selector: access the `adminProducts` slice, then `selectedProduct`
   const { selectedProduct, loading, error } = useSelector(
-    (state) => state.adminProducts
+    (state) => state.adminProducts,
   );
 
   const [productData, setProductData] = useState({
@@ -79,57 +79,58 @@ function EditProductPage() {
     setProductData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-const handleImageUpload = async (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const formData = new FormData();
-  formData.append("image", file);
+    const formData = new FormData();
+    formData.append("image", file);
 
-  try {
-    setUploading(true);
+    try {
+      setUploading(true);
 
-    let token;
-    const storedUserInfo = localStorage.getItem("userInfo");
-    if (storedUserInfo) {
-      try {
-        const parsed = JSON.parse(storedUserInfo);
-        token = parsed.token;
-      } catch {
-        token = null;
+      let token;
+      const storedUserInfo = localStorage.getItem("userInfo");
+      if (storedUserInfo) {
+        try {
+          const parsed = JSON.parse(storedUserInfo);
+          token = parsed.token;
+        } catch {
+          token = null;
+        }
       }
-    }
-    if (!token) {
-      token = localStorage.getItem("userToken");
-    }
-    if (!token) {
-      throw new Error("Auth token missing");
-    }
+      if (!token) {
+        token = localStorage.getItem("userToken");
+      }
+      if (!token) {
+        throw new Error("Auth token missing");
+      }
 
-    const { data } = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/api/upload/`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/upload/`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
         },
-      }
-    );
+      );
 
-    setProductData((prevData) => ({
-      ...prevData,
-      images: [...prevData.images, { url: data.imageUrl, altText: file.name }],
-    }));
+      setProductData((prevData) => ({
+        ...prevData,
+        images: [
+          ...prevData.images,
+          { url: data.imageUrl, altText: file.name },
+        ],
+      }));
 
-    setUploading(false);
-  } catch (error) {
-    console.error("Image upload failed:", error);
-    setUploading(false);
-  }
-};
-
-
+      setUploading(false);
+    } catch (error) {
+      console.error("Image upload failed:", error);
+      setUploading(false);
+    }
+  };
 
   // Optional: Function to remove an image from the list
   const handleRemoveImage = (indexToRemove) => {
