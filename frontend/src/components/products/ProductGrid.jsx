@@ -38,7 +38,7 @@ function ProductGrid({ products, loading, error }) {
                 <img
                   src={product.images[0].url}
                   alt={product.name}
-                  className="w-full h-full object-cover rounded-lg transform group-hover:scale-105 transition-transform duration-300" // Added scale on hover
+                  className="w-full h-full object-cover rounded-lg transform group-hover:scale-105 transition-transform duration-300" 
                   loading="lazy"
                 />
               ) : (
