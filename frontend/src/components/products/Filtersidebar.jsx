@@ -22,11 +22,8 @@ function Filtersidebar() {
     "Blue",
     "Green",
     "Black",
-    "Yellow",
     "Gray",
-    "Pink",
     "White",
-    "Beige",
   ];
 
   const size = ["XS", "S", "M", "L", "XL", "XXL"];
@@ -107,8 +104,8 @@ function Filtersidebar() {
   };
 
   return (
-    <div className="p-2">
-      <label className="text-xl font-medium text-gray-800 mb-5"> Filter </label>
+    <div className="py-4 mt-[5rem]">
+      <label className="text-xl font-medium text-gray-800 mb-4"> Filter </label>
       {/* Category Filter */}
       <div className="mb-6">
         <label className="block text-gray-600 font-medium mb-3">Category</label>

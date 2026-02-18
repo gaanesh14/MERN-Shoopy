@@ -68,7 +68,7 @@ function Collectionspage() {
   if (error) return <p> Error : {error}</p>;
 
   return (
-    <div className="flex flex-col lg:flex-row">
+    <div className="flex flex-col lg:flex-row container mx-auto">
       <button
         onClick={toogleSideBar}
         className="lg:hidden  border p-2 flex justify-center items-center"
@@ -78,12 +78,12 @@ function Collectionspage() {
       <div
         ref={sidebarRef}
         className={`${isSideBarOpen ? "translate-x-0" : "-translate-x-full"} 
-           fixed inset-y-0 z-50 left-0 w-64 bg-white overflow-y-auto transition-transform duration-300 lg:static lg:translate-x-0`}
+           fixed inset-y-0 z-10 left-0 md:block w-1/6 bg-white overflow-y-auto transition-transform duration-300 lg:static lg:translate-x-0`}
       >
         <Filtersidebar />
       </div>
-      <div className="text-grow p-4">
-        <h2 className="text-2xl uppercase mb-4"> All Collections </h2>
+      <div className="text-grow p-4 w-full md:w-3/2">
+        <h2 className="text-2xl uppercase mb-4 mt-20"> All Collections </h2>
         {/* {sort options} */}
         <SortOptions />
 
